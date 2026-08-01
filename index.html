@@ -626,17 +626,90 @@ footer p{max-width:none;color:var(--ink-3)}
       the standalone panel above is there for the case where you would rather not build one.
     </p>
   </section>
+
+
   <section>
-    <div class="sec-head"><h2>Dropping it in</h2></div>
-    <ul class="clean">
-      <li><b>One gamemode module.</b> <code>server/contracts/</code> plus a few lines in your gamemode entry. Pure TypeScript, no ESP, no Papyrus.</li>
-      <li><b>Two settings.</b> The broadcast flag and a signing key, as above.</li>
-      <li><b>One UI file.</b> A single HTML file in <code>Data/Platform/UI/</code>, fonts inlined, no asset paths to lose inside CEF.</li>
-      <li><b>Nothing for players.</b> The board and every action are delivered by the server at runtime.</li>
-      <li><b>Persistence is free.</b> Contracts live in server properties, so they survive restarts as ChangeForms with no database work.</li>
-    </ul>
+    <div class="sec-head">
+      <h2>Running it on your own server</h2>
+      <span class="tag">four steps, no coordination with me</span>
+    </div>
+    <p class="lede">
+      Nothing here needs my involvement. Take the folder, wire four lines into your gamemode,
+      set two settings, and the server tells you on boot whether it works.
+    </p>
+
+    <div class="stack">
+      <figure class="plate">
+        <figcaption><span>One. Take the module</span><b>server/contracts/</b></figcaption>
+<pre>server/contracts/     <span class="c">// contract.ts escrow.ts identity.ts service.ts wire.ts</span>
+server/canonical.ts   <span class="c">// deterministic serialisation, used by the seal</span></pre>
+      </figure>
+
+      <figure class="plate">
+        <figcaption><span>Two. Wire it into your gamemode</span><b>gamemode.ts</b></figcaption>
+<pre><span class="k">import</span> { makeDeps, registerContracts, sweepDelivered, sweepExpired } <span class="k">from</span> <span class="s">"./contracts/service"</span>;
+<span class="k">import</span> { makeWireState, pushViews, registerWire } <span class="k">from</span> <span class="s">"./contracts/wire"</span>;
+
+<span class="k">const</span> contracts = makeDeps(process.env[<span class="s">"CONTRACT_SECRET"</span>], console.log);
+<span class="k">const</span> state = makeWireState();
+
+registerContracts(contracts);
+registerWire(contracts, state);
+
+setInterval(() =&gt; pushViews(contracts, state), 1000);
+setInterval(() =&gt; { sweepExpired(contracts); sweepDelivered(contracts); }, 3600000);</pre>
+      </figure>
+
+      <figure class="plate">
+        <figcaption><span>Three. Two settings</span><b>server-settings.json</b></figcaption>
+<pre>{
+  <span class="n">"enableGamemodeDataUpdatesBroadcast"</span>: <span class="k">true</span>,
+  <span class="n">"serverKey"</span>: { <span class="n">"private"</span>: <span class="s">"&lt;pkcs8 pem&gt;"</span>, <span class="n">"alias"</span>: <span class="s">"mereth"</span> }
+}</pre>
+      </figure>
+
+      <figure class="plate">
+        <figcaption><span>Four. Show it, whichever way suits you</span><b>your UI, or none</b></figcaption>
+<pre><span class="c">// Your React bundle already receives server data this way.</span>
+window.addEventListener(<span class="s">"mereth:contracts"</span>, (e) =&gt; setBoard(e.detail));
+
+<span class="c">// Or drop the standalone panel in and write nothing.</span>
+<span class="c">// Data/Platform/UI/mereth/index.html</span></pre>
+      </figure>
+    </div>
   </section>
 
+  <section>
+    <div class="sec-head">
+      <h2>How you check I am not lying</h2>
+      <span class="tag">before you trust a line of it</span>
+    </div>
+    <p class="lede">
+      The contract engine tests itself against your live server on every boot, using your ESPM
+      data and your database. No harness, no fixtures, nothing to install. Start the server and
+      read the log.
+    </p>
+    <figure class="plate term">
+      <figcaption><span>On your server, at startup</span><b>skymp5-server</b></figcaption>
+<pre><span class="dim">[contracts]</span> properties registered
+<span class="dim">[contracts]</span> wire registered, view property and action channel are live
+<span class="dim">[contracts]</span> posted con-00001 (funded, 300 septims)
+<span class="dim">[contracts]</span> con-00003 defaulted, 350 septims owed by Aldric Vane
+<span class="dim">[contracts]</span> self-test <span class="ok">25/25</span> passed
+<span class="dim">[contracts]</span> <span class="ok">CONTRACTS OK</span></pre>
+    </figure>
+    <p class="lede" style="margin-top:26px">
+      That run posts real contracts, binds real coin, defaults one on purpose and writes the
+      debt note, then checks the arithmetic. If it prints anything but CONTRACTS OK, do not
+      ship it, and the failing line names what broke.
+    </p>
+    <ul class="clean">
+      <li><b>Then try to break it in game.</b> Post a funded service, mark it delivered from the worker's side, and watch the escrow refuse to move until the client answers.</li>
+      <li><b>Try to steal from yourself.</b> Take your own contract, settle work you did not do, refuse a delivery you were not party to. Every one is refused by the server and told to you in words.</li>
+      <li><b>Pull the plug.</b> Contracts live in server properties, so restart mid-contract and the board comes back exactly as it was.</li>
+      <li><b>Read it.</b> Roughly 1,400 lines of TypeScript, no dependencies outside node:crypto, and the interesting decisions are commented with why rather than what.</li>
+    </ul>
+  </section>
   <section>
     <div class="sec-head"><h2>Honest limits</h2></div>
     <ul class="clean">
