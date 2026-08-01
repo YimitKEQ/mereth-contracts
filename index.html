@@ -192,6 +192,37 @@ ul.clean li b{color:var(--ink);font-weight:400}
 
 footer{padding:44px 0 72px;border-top:1px solid var(--rule);color:var(--ink-3);font-size:12.5px;letter-spacing:.06em}
 footer p{max-width:none;color:var(--ink-3)}
+
+/* The download. It is the one place on the page asking to be clicked, so it gets the gold
+   and everything else stays quiet. The manifest sits beside it rather than behind a
+   disclosure: knowing exactly what lands on your disk is the reason you would trust it. */
+.drop-body{display:grid;grid-template-columns:minmax(0,.72fr) minmax(0,1.28fr);gap:0}
+.drop-get{
+  display:flex;flex-direction:column;justify-content:center;gap:9px;
+  padding:26px 24px;text-decoration:none;color:var(--ink);
+  border-right:1px solid var(--rule-soft);
+  transition:background .25s cubic-bezier(.22,1,.36,1);
+}
+.drop-get:hover{background:color-mix(in oklch, var(--gold) 8%, transparent)}
+.drop-get b{font-weight:400;color:var(--gold);font-size:20px;letter-spacing:-.01em}
+.drop-get span{
+  font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--ink-3);
+  font-variant-numeric:tabular-nums;
+}
+.drop-tree{
+  margin:0;padding:20px 22px;background:transparent;border:0;
+  font-size:11.5px;line-height:1.85;color:var(--ink-3);overflow-x:auto;
+}
+.drop-tree b{font-weight:400;color:var(--ink-2)}
+.drop-sum{
+  padding:11px 17px;border-top:1px solid var(--rule-soft);
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.02em;color:var(--ink-3);
+  overflow-x:auto;white-space:nowrap;
+}
+@media (max-width:720px){
+  .drop-body{grid-template-columns:1fr}
+  .drop-get{border-right:0;border-bottom:1px solid var(--rule-soft)}
+}
 </style>
 
 <div class="wrap">
@@ -632,15 +663,36 @@ footer p{max-width:none;color:var(--ink-3)}
       <span class="tag">four steps, no coordination with me</span>
     </div>
     <p class="lede">
-      You do not need me for any of this. Grab the folder, wire four lines into your gamemode,
-      flip two settings, and the server tells you on boot whether it is working.
+      You do not need me for any of this. Download the folder, wire four lines into your
+      gamemode, flip two settings, and the server tells you on boot whether it is working.
     </p>
 
     <div class="stack">
       <figure class="plate">
-        <figcaption><span>One. Take the module</span><b>server/contracts/</b></figcaption>
-<pre>server/contracts/     <span class="c">// contract.ts escrow.ts identity.ts service.ts wire.ts</span>
-server/canonical.ts   <span class="c">// deterministic serialisation, used by the seal</span></pre>
+        <figcaption><span>One. Take the module</span><b>mereth-contracts.zip</b></figcaption>
+        <div class="drop-body">
+          <a class="drop-get" href="mereth-contracts.zip" download>
+            <b>Download the module</b>
+            <span><!--drop:meta-->76.9 KB &middot; MIT licensed &middot; 13 files<!--/drop:meta--></span>
+          </a>
+<pre class="drop-tree"><!--drop:tree--><b>THE MODULE</b>
+  contracts/contract.ts   <span class="c">// the engine, no game calls</span>
+  contracts/escrow.ts     <span class="c">// gold and goods</span>
+  contracts/identity.ts   <span class="c">// real character names</span>
+  contracts/service.ts    <span class="c">// engine to server</span>
+  contracts/wire.ts       <span class="c">// players and the board</span>
+  contracts/selftest.ts   <span class="c">// checks itself on boot</span>
+  canonical.ts            <span class="c">// used by the seal</span>
+  mp.ts                   <span class="c">// the SkyMP API, typed</span>
+
+<b>PROOF</b>
+  contracts.test.ts       <span class="c">// the rules</span>
+  identity.test.ts        <span class="c">// the naming</span>
+
+<b>OPTIONAL</b>
+  contracts/index.html    <span class="c">// the panel, self contained</span><!--/drop:tree--></pre>
+        </div>
+        <div class="drop-sum">sha256 <!--drop:sha-->f47f85bb7ff499300188ea2b2c173420dcafa4651e7d05f34d51898a2605a3b2<!--/drop:sha--></div>
       </figure>
 
       <figure class="plate">
