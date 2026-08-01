@@ -455,7 +455,7 @@ button.seal-it:hover{background:rgba(200,150,53,.24);color:#fff}
     if (c.state === "open" && isClient) out.push(["withdraw", "Withdraw it", "ghost"]);
     if (c.state === "accepted" && isWorker) out.push(["deliver", "Report it done", ""]);
     if (c.state === "delivered" && isClient) {
-      out.push(["settle", "Pay and close", ""]);
+      out.push(["settle", "Accept and pay", ""]);
       out.push(["reject", "Refuse the work", "warn"]);
     }
     if (!out.length) return "";
@@ -560,8 +560,8 @@ button.seal-it:hover{background:rgba(200,150,53,.24);color:#fff}
             '<button type="button" data-fund="unfunded" aria-pressed="' + (!funded) + '">On my word</button>' +
           "</div>" +
           '<div class="note-txt">' + (funded
-            ? "The fee leaves your purse the moment you set this down and is held until the work is settled or the contract lapses. Whoever takes it is certain of payment."
-            : "Nothing leaves your purse now. If you cannot pay when the work is done, a debt note is written in your name and anyone may read it.") +
+            ? "The fee leaves your purse the moment you set this down and is held. When the work is reported done you have two days to accept it or refuse it. Say nothing and it pays out on its own, so nobody can be left waiting on you."
+            : "Nothing leaves your purse now. When the work is done you settle it yourself, and if you cannot pay, a debt note is written in your name for anyone to read.") +
           "</div>" +
         "</div>" +
         '<button class="seal-it" type="submit">Set it down</button>' +

@@ -206,8 +206,8 @@ footer p{max-width:none;color:var(--ink-3)}
     </p>
     <div class="tally">
       <span><b>15/15</b>live client</span>
-      <span><b>28/28</b>contract rules</span>
-      <span><b>127</b>unit tests</span>
+      <span><b>31/31</b>contract rules</span>
+      <span><b>133</b>unit tests</span>
       <span><b>0</b>client installs</span>
     </div>
   </header>
@@ -523,6 +523,65 @@ footer p{max-width:none;color:var(--ink-3)}
   </section>
 
 
+
+  <section>
+    <div class="sec-head">
+      <h2>How work actually gets finished</h2>
+      <span class="tag">not honour</span>
+    </div>
+    <p class="lede">
+      A funded contract holds real coin between the moment work is claimed done and the moment
+      it is paid for. Whoever gets to end that standoff on their own can rob the other one, so
+      it depends on what was promised.
+    </p>
+    <div class="plate tablewrap">
+      <table>
+        <thead><tr><th>What was promised</th><th>How it ends</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Goods, funded</td>
+            <td><b>Machine checked.</b> The server counts the items out of the worker and into the client before it will record a delivery, then pays immediately. Nobody is taken at their word.</td>
+          </tr>
+          <tr>
+            <td>Service, funded</td>
+            <td>The worker reports it done and the escrow stays held. The client has two days to accept or refuse. Say nothing and it releases to the worker.</td>
+          </tr>
+          <tr>
+            <td>Service, unfunded</td>
+            <td>The client settles it themselves. If they cannot pay, a sealed debt note is written naming both parties.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="lede" style="margin-top:26px">
+      The middle row is the one that matters, and it started out wrong. A funded service used
+      to pay the instant the worker pressed the button, which meant anyone could take a funded
+      job, claim it finished and walk off with the escrow. Expiry made the mirror image
+      possible: a client who ignored finished work until the deadline got their coin back.
+    </p>
+    <p class="lede">
+      Now expiry refuses to touch delivered work, and the review window closes the other side.
+      A refusal is still recorded against both parties and judged by neither, which is the part
+      that stays social.
+    </p>
+    <figure class="plate">
+      <figcaption><span>Silence is not a refusal</span><b>sweepDelivered()</b></figcaption>
+<pre><span class="c">// The counterpart to sweepExpired: that one protects a client whose worker</span>
+<span class="c">// vanished, this one protects a worker whose client did.</span>
+<span class="k">export function</span> <span class="f">sweepDelivered</span>(deps: <span class="f">ContractDeps</span>): <span class="f">number</span> {
+  <span class="k">const</span> now = deps.now();
+  <span class="k">let</span> released = 0;
+
+  <span class="k">for</span> (<span class="k">const</span> contract <span class="k">of</span> allContracts(deps)) {
+    <span class="k">if</span> (!reviewWindowElapsed(contract, now)) <span class="k">continue</span>;
+    <span class="k">if</span> (!settle(deps, contract.id).ok) <span class="k">continue</span>;
+    released += 1;
+  }
+
+  <span class="k">return</span> released;
+}</pre>
+    </figure>
+  </section>
   <section>
     <div class="sec-head">
       <h2>Does it run on your client</h2>
