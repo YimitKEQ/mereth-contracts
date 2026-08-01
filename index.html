@@ -200,6 +200,22 @@ ul.clean li{padding-left:20px;position:relative;color:var(--ink-2);font-size:15p
 ul.clean li::before{content:"";position:absolute;left:0;top:.62em;width:7px;height:1px;background:var(--gold)}
 ul.clean li b{color:var(--ink);font-weight:500}
 
+
+/* ---------- the live board ---------- */
+.board-frame{
+  position:relative;background:#0A0807;border:1px solid var(--rule);
+  clip-path:polygon(var(--chamfer) 0,100% 0,100% calc(100% - var(--chamfer)),calc(100% - var(--chamfer)) 100%,0 100%,0 var(--chamfer));
+}
+.board-frame iframe{display:block;width:100%;height:660px;border:0;background:#0A0807}
+.board-note{
+  display:flex;gap:14px;align-items:baseline;flex-wrap:wrap;
+  font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);
+  padding:11px 16px;border-bottom:1px solid var(--rule-soft);
+}
+.board-note b{font-weight:400;color:var(--gold);font-family:var(--mono);letter-spacing:.02em;text-transform:none;font-size:11.5px}
+.board-note .live{color:var(--green);display:inline-flex;align-items:center;gap:7px}
+.board-note .live::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block}
+@media (max-width:700px){.board-frame iframe{height:560px}}
 footer{padding:38px 0 60px;color:var(--ink-3);font-size:13px;border-top:1px solid var(--rule)}
 footer p{max-width:none}
 </style>
@@ -234,7 +250,7 @@ footer p{max-width:none}
 <pre><span class="hd">roleplay cycle, against a live client</span>
 
   <span class="ok">PASS</span>  a real player is connected
-        <span class="dim">Prisoner (0xff00003c)</span>
+        <span class="dim">An unnamed traveller (0xff00003c)</span>
   <span class="ok">PASS</span>  another character can post work
   <span class="ok">PASS</span>  the contract reaches the player's own board
         <span class="dim">purse holds 3790 septims</span>
@@ -254,11 +270,36 @@ footer p{max-width:none}
   <div class="figs" style="margin-top:20px">
     <div class="fig"><div class="v">15/15</div><div class="l">Live client</div></div>
     <div class="fig"><div class="v">28/28</div><div class="l">Contract rules</div></div>
-    <div class="fig"><div class="v">117</div><div class="l">Unit tests</div></div>
+    <div class="fig"><div class="v">127</div><div class="l">Unit tests</div></div>
     <div class="fig"><div class="v">0</div><div class="l">Client installs</div></div>
   </div>
 </section>
 
+
+<section>
+  <div class="sec-head">
+    <h2>The board, as a player sees it</h2>
+    <span class="tag">live, not a picture</span>
+  </div>
+  <p class="lede">
+    This is the real interface file, running here with sample contracts in it. Click the tabs.
+    Take the salt wagon job, pay off the delivered one, read the debt. It is the same HTML the
+    server pushes into a player's game, driven by the same entry point.
+  </p>
+  <div class="plate board-frame">
+    <div class="board-note">
+      <span class="live">Interactive</span>
+      <span>Sample data</span>
+      <b>Data/Platform/UI/mereth/index.html</b>
+    </div>
+    <iframe id="board" src="board.html" title="The Mereth contract board, running with sample contracts"></iframe>
+  </div>
+  <p style="margin-top:18px;color:var(--ink-2)">
+    Each contract is a leaf of the register. The wax seal carries its state, so an unpaid
+    promise reads as a broken seal at a glance. The fee, the funding flag and what you may do
+    about it sit in the ruled margin, which is where a clerk would have written them.
+  </p>
+</section>
 <section>
   <div class="sec-head"><h2>Two ideas carry the weight</h2></div>
   <div class="ideas">
@@ -482,6 +523,38 @@ footer p{max-width:none}
   </figure>
 </section>
 
+
+<section>
+  <div class="sec-head">
+    <h2>What a player is called</h2>
+    <span class="tag">server/contracts/identity.ts</span>
+  </div>
+  <p class="lede">
+    Worth calling out, because the obvious call is the wrong one and it took a live server to
+    notice. Every player character is built on the same base record, the vanilla player NPC_ at
+    <code>0x7</code>, which is named <em>Prisoner</em>. So <code>getActorName</code> reported
+    that Prisoner had posted work for Prisoner and Prisoner had taken it.
+  </p>
+  <p class="lede">
+    The name a player chose lives in the character's appearance, and that is the same string
+    SkyMP puts above their head: the client runs
+    <code>refr.setDisplayName(model.appearance.name, true)</code> on every appearance update.
+    The stable identity is <code>profileId</code>, not the form id, which is reassigned on
+    every connect.
+  </p>
+  <figure class="plate">
+    <figcaption><span>Ask for the string the nameplate shows</span><b>characterName()</b></figcaption>
+<pre><span class="k">const</span> appearance = mp.get(formId, <span class="s">"appearance"</span>) <span class="k">as</span> <span class="f">Appearance</span> | <span class="k">null</span>;
+<span class="k">const</span> chosen = appearance?.name;
+<span class="k">if</span> (<span class="k">typeof</span> chosen === <span class="s">"string"</span> &amp;&amp; chosen.trim() !== <span class="s">""</span>) <span class="k">return</span> chosen.trim();
+
+<span class="k">const</span> actorName = mp.getActorName(formId);
+<span class="c">// Anything but the base record name means a real name arrived some other way.</span>
+<span class="k">if</span> (actorName &amp;&amp; actorName !== BASE_RECORD_NAME) <span class="k">return</span> actorName.trim();
+
+<span class="k">return</span> UNNAMED;</pre>
+  </figure>
+</section>
 <section>
   <div class="sec-head"><h2>Dropping it in</h2></div>
   <ul class="clean">
@@ -510,3 +583,151 @@ footer p{max-width:none}
     <p>Built for Mereth Roleplay. Server-authoritative, no client install, 4E 185.</p>
   </div>
 </footer>
+
+<script>
+(function () {
+  var frame = document.getElementById("board");
+  if (!frame) return;
+
+  // Times are offsets, so the sample always reads as "2 days left" rather than as a date in
+  // the past however long this page has been sitting open.
+  var SAMPLE = {
+  "rev": 12,
+  "self": {
+    "formId": 4278190140,
+    "profileId": 41,
+    "name": "Aldric Vane",
+    "coin": 1840
+  },
+  "board": [
+    {
+      "id": "con-00007",
+      "kind": "service",
+      "title": "Escort a salt wagon to Whiterun",
+      "body": "Two carts leaving Riverwood at dusk. I want four blades on the road with them.\nPay on arrival at the Bannered Mare, not before.",
+      "reward": 450,
+      "funding": "funded",
+      "state": "open",
+      "clientName": "Marcurio Vell",
+      "clientId": 4278190153,
+      "workerName": null,
+      "workerId": null,
+      "deadlineIn": 172800000,
+      "postedAgo": 3600000,
+      "escrow": 450,
+      "deliverable": null
+    },
+    {
+      "id": "con-00008",
+      "kind": "goods",
+      "title": "Iron ingots for the Skyforge",
+      "body": "Eorlund is short again. Bring them to the forge and I will count them there.",
+      "reward": 180,
+      "funding": "unfunded",
+      "state": "open",
+      "clientName": "Ysolda",
+      "clientId": 4278190154,
+      "workerName": null,
+      "workerId": null,
+      "deadlineIn": 21600000,
+      "postedAgo": 7200000,
+      "escrow": 0,
+      "deliverable": {
+        "formId": 371428,
+        "count": 20,
+        "label": "iron ingots"
+      }
+    }
+  ],
+  "mine": [
+    {
+      "id": "con-00005",
+      "kind": "service",
+      "title": "Clear the bandits from Halted Stream",
+      "body": "They have been taking from the mill for a month. I want it finished quietly.",
+      "reward": 900,
+      "funding": "funded",
+      "state": "delivered",
+      "clientName": "Aldric Vane",
+      "clientId": 4278190140,
+      "workerName": "Brynjar Stone-Hand",
+      "workerId": 4278190148,
+      "deadlineIn": 43200000,
+      "postedAgo": 172800000,
+      "escrow": 900,
+      "deliverable": null
+    },
+    {
+      "id": "con-00002",
+      "kind": "service",
+      "title": "Carry a letter to Solitude",
+      "body": "Sealed. It goes into the hand of the steward and no other.",
+      "reward": 200,
+      "funding": "unfunded",
+      "state": "settled",
+      "clientName": "Aldric Vane",
+      "clientId": 4278190140,
+      "workerName": "Ma'jhad",
+      "workerId": 4278190151,
+      "deadlineIn": -3600000,
+      "postedAgo": 604800000,
+      "escrow": 0,
+      "deliverable": null
+    }
+  ],
+  "debts": [
+    {
+      "id": "debt-00001",
+      "contractId": "con-00000",
+      "debtorName": "Nazeem",
+      "creditorName": "Aldric Vane",
+      "amount": 350,
+      "incurredAgo": 86400000
+    }
+  ]
+};
+
+  function absolute(list) {
+    return list.map(function (c) {
+      var out = {};
+      for (var k in c) if (Object.prototype.hasOwnProperty.call(c, k)) out[k] = c[k];
+      out.deadline = Date.now() + c.deadlineIn;
+      out.postedAt = Date.now() - c.postedAgo;
+      return out;
+    });
+  }
+
+  function build() {
+    return {
+      rev: SAMPLE.rev,
+      self: SAMPLE.self,
+      board: absolute(SAMPLE.board),
+      mine: absolute(SAMPLE.mine),
+      debts: SAMPLE.debts.map(function (d) {
+        return { id: d.id, contractId: d.contractId, debtorName: d.debtorName,
+                 creditorName: d.creditorName, amount: d.amount,
+                 incurredAt: Date.now() - d.incurredAgo };
+      }),
+      notice: null, summary: {}, serverTime: Date.now()
+    };
+  }
+
+  // The frame may or may not have parsed by the time this runs, so try now, try on load, and
+  // stop after a couple of seconds rather than polling forever.
+  var tries = 0;
+  function feed() {
+    try {
+      frame.contentWindow.mereth.onView(build());
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+  frame.addEventListener("load", feed);
+  var timer = setInterval(function () {
+    if (feed() || ++tries > 20) clearInterval(timer);
+  }, 100);
+  feed();
+}());
+</script>
+
