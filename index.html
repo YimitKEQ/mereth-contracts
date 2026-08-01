@@ -522,6 +522,51 @@ footer p{max-width:none;color:var(--ink-3)}
     </figure>
   </section>
 
+
+  <section>
+    <div class="sec-head">
+      <h2>Does it run on your client</h2>
+      <span class="tag">checked against your published bundle</span>
+    </div>
+    <p class="lede">
+      Not a guess. Your client is public in <code>BStarRP_SkyMP_Data</code>, so every mechanism
+      this depends on was checked against the 7.5 MB bundle your launcher ships, not against
+      upstream skymp.
+    </p>
+    <div class="plate tablewrap">
+      <table>
+        <thead><tr><th>What this needs</th><th>In your client</th></tr></thead>
+        <tbody>
+          <tr><td>updateOwnerFunctions</td><td>Present. Gamemode property handlers compile the same way.</td></tr>
+          <tr><td>updateGamemodeDataMessage</td><td>Present. The channel that carries them is intact.</td></tr>
+          <tr><td>ServerJsVerificationService</td><td>Present, with the <code>skymp:sig:y:</code> prefix. Signing works unchanged.</td></tr>
+          <tr><td>eventSourceContexts, sendEvent</td><td>Present. Player actions reach the server by the same route.</td></tr>
+          <tr><td>browserMessage</td><td>Present, and used heavily. 58 call sites.</td></tr>
+          <tr><td>SweetTaffyEvalService</td><td><b>Removed.</b> Only my unattended test harness used it. The feature does not.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="lede" style="margin-top:26px">
+      The one thing that would have broken: your client drives its own React interface with
+      <code>browser.loadUrl</code> and <code>browser.setVisible</code>, so anything of mine that
+      claimed the browser would wipe your UI off the screen. It does not. The push calls a
+      global if one exists and dispatches a CustomEvent, which is the same way your client
+      already hands data to your own interface. Both are no-ops when nothing is listening.
+    </p>
+    <figure class="plate" style="margin-top:22px">
+      <figcaption><span>Delivery that takes over nothing</span><b>updateOwner</b></figcaption>
+<pre>ctx.sp.browser.executeJavaScript(
+  <span class="s">"(function(){try{"</span> +
+    <span class="s">"window.mereth &amp;&amp; window.mereth.onView &amp;&amp; window.mereth.onView("</span> + json + <span class="s">");"</span> +
+    <span class="s">"window.dispatchEvent(new CustomEvent('mereth:contracts',{detail:"</span> + json + <span class="s">"}));"</span> +
+  <span class="s">"}catch(e){}})()"</span>
+);</pre>
+    </figure>
+    <p style="margin-top:22px">
+      So a component of yours listening for <code>mereth:contracts</code> gets the board, and
+      the standalone panel above is there for the case where you would rather not build one.
+    </p>
+  </section>
   <section>
     <div class="sec-head"><h2>Dropping it in</h2></div>
     <ul class="clean">
