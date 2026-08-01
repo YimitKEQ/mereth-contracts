@@ -707,7 +707,7 @@ window.addEventListener(<span class="s">"mereth:contracts"</span>, (e) =&gt; set
       <li><b>Then try to break it in game.</b> Post a funded service, mark it delivered from the worker's side, and watch the escrow refuse to move until the client answers.</li>
       <li><b>Try to steal from yourself.</b> Take your own contract, settle work you did not do, refuse a delivery you were not party to. Every one is refused by the server and told to you in words.</li>
       <li><b>Pull the plug.</b> Contracts live in server properties, so restart mid-contract and the board comes back exactly as it was.</li>
-      <li><b>Read it.</b> Roughly 1,400 lines of TypeScript, no dependencies outside node:crypto, and the interesting decisions are commented with why rather than what.</li>
+      <li><b>Read it.</b> 1,293 lines of TypeScript across six files, nothing imported outside <code>node:crypto</code> and the SkyMP types. The interesting decisions carry a comment saying why, not what, which is most of the remaining bulk and is deliberate: you should not have to take my word for any of it.</li>
     </ul>
   </section>
   <section>
