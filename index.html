@@ -200,9 +200,9 @@ footer p{max-width:none;color:var(--ink-3)}
     <div class="kicker">Mereth Roleplay &nbsp;/&nbsp; SkyMP gamemode &nbsp;/&nbsp; TypeScript</div>
     <h1>Contracts<span>Work, coin, and a broken promise</span></h1>
     <p class="standfirst">
-      One player posts work. Another takes it. The server moves the septims and keeps the
-      record. No arbitration, no staff queue, no NPCs. When somebody cannot pay, that becomes
-      a thing other players can read.
+      One player posts a job, another takes it, and the server moves the gold and keeps the
+      receipts. No tickets, no staff queue, no NPCs. And if someone cannot pay up, that turns
+      into a debt note anyone can go read.
     </p>
     <div class="tally">
       <span><b>15/15</b>live client</span>
@@ -218,8 +218,8 @@ footer p{max-width:none;color:var(--ink-3)}
       <span class="tag">verified against a live client</span>
     </div>
     <p class="lede">
-      Real output. A character posts work, the connected player takes it, delivers it, and the
-      reward lands in the inventory they are carrying.
+      Real run, not a mockup. Someone posts a job, the player who is actually in game takes it,
+      finishes it, and the gold lands in the inventory they are carrying.
     </p>
     <figure class="plate term">
       <figcaption><span>Live session</span><b>npm run rp:cycle</b></figcaption>
@@ -250,9 +250,9 @@ footer p{max-width:none;color:var(--ink-3)}
       <span class="tag">live, not a picture</span>
     </div>
     <p class="lede">
-      The real interface file, running here with sample contracts in it. Click the tabs. Take
-      the salt wagon job, pay off the delivered one, read the debt. It is the same HTML the
-      server pushes into a player's game, driven by the same entry point.
+      This is the actual UI file, running right here with some fake contracts loaded. Go poke at
+      it. Take the salt wagon job, pay off the one that has been delivered, check the debt. Same
+      HTML the server pushes into the game, same entry point.
     </p>
     <div class="board-frame">
       <div class="board-note">
@@ -263,9 +263,9 @@ footer p{max-width:none;color:var(--ink-3)}
       <iframe id="board" src="board.html" title="The Mereth contract board, running with sample contracts"></iframe>
     </div>
     <p style="margin-top:22px">
-      Each contract is a leaf of the register. The wax seal carries its state, so an unpaid
-      promise reads as a seal broken across the middle at a glance. The fee, the funding flag
-      and what you may do about it sit in the ruled margin, where a clerk would have put them.
+      Every contract is a page in the ledger. The wax seal is the status, so a stiffed promise
+      shows up as a seal cracked down the middle before you read a word. Pay, funding and your
+      buttons live in the margin, which is where a clerk would have scribbled them.
     </p>
   </section>
 
@@ -274,25 +274,24 @@ footer p{max-width:none;color:var(--ink-3)}
     <div class="ideas">
       <div class="idea">
         <span class="num">The first</span>
-        <h3>Funded or unfunded, and everyone can see which</h3>
+        <h3>Escrow or a handshake, and everyone can see which</h3>
         <p>
-          A funded contract takes the coin the moment it is posted and holds it. Whoever takes
-          the work is certain of payment. An unfunded one binds nothing, so taking it is a bet
-          on the client's word.
+          Fund it and the gold leaves your purse the second you post, held until the job is
+          done, so whoever takes it knows they are getting paid. Do not fund it and nothing
+          moves, so anyone taking that job is betting on you.
         </p>
         <p style="margin-top:14px">
-          That single visible flag turns reputation from a number into a question players
-          actually ask each other: will anyone work for you on your word alone?
+          That one visible flag turns reputation from a number nobody looks at into a question
+          people actually ask each other: will anyone work for you on your word alone?
         </p>
       </div>
       <div class="idea">
         <span class="num">The second</span>
-        <h3>A promise that breaks becomes an object</h3>
+        <h3>Stiff someone and it follows you around</h3>
         <p>
-          When an unfunded contract is delivered and the client cannot pay, nothing errors. A
-          debt note is written and sealed, naming both parties and the contract it came from.
-          Anyone can read it. A broken promise stops being a failure state and starts being
-          evidence.
+          Job gets done, client cannot pay, and nothing errors out. The server writes a sealed
+          debt note with both names on it and the job it came from, and anyone can read it. A
+          broken promise stops being an error message and starts being evidence.
         </p>
       </div>
     </div>
@@ -305,12 +304,12 @@ footer p{max-width:none;color:var(--ink-3)}
 
   <section>
     <div class="sec-head">
-      <h2>The default path</h2>
+      <h2>When someone cannot pay</h2>
       <span class="tag">server/contracts/contract.ts</span>
     </div>
     <p class="lede">
-      The engine is pure. It never touches the game, so it tests headless, and it decides
-      nothing about who was right.
+      The engine is pure. It never touches the game, so it tests headless in milliseconds, and
+      it never decides who was in the right.
     </p>
     <figure class="plate">
       <figcaption><span>Settling what cannot be paid</span><b>settleContract()</b></figcaption>
@@ -341,13 +340,13 @@ footer p{max-width:none;color:var(--ink-3)}
 
   <section>
     <div class="sec-head">
-      <h2>Coin is never invented</h2>
+      <h2>Gold never appears from nowhere</h2>
       <span class="tag">server/contracts/escrow.ts</span>
     </div>
     <p class="lede">
-      Two rules govern everything that moves money. Never create coin: every septim paid out
-      was first taken from somebody. And take before you promise, so a failure leaves no
-      contract rather than an unpayable one.
+      Two rules for anything touching money. Never mint gold: every septim paid out came off
+      somebody first. And take it before you promise it, so when something breaks you end up
+      with no contract instead of one nobody can pay.
     </p>
     <div class="stack">
       <figure class="plate">
@@ -381,12 +380,12 @@ footer p{max-width:none;color:var(--ink-3)}
 
   <section>
     <div class="sec-head">
-      <h2>A player cannot act as somebody else</h2>
+      <h2>You cannot act as someone else</h2>
       <span class="tag">server/contracts/wire.ts</span>
     </div>
     <p class="lede">
-      The client names an action and a contract id. It never names the actor. That comes from
-      the connection, which is the whole authorization story in one line.
+      The client sends an action and a contract id. It never sends who it is. That comes off the
+      connection, and that is the whole auth story right there.
     </p>
     <figure class="plate">
       <figcaption><span>The only handler</span><b>handleAction()</b></figcaption>
@@ -409,21 +408,21 @@ footer p{max-width:none;color:var(--ink-3)}
 
   <section>
     <div class="sec-head">
-      <h2>What a player is called</h2>
+      <h2>Why everyone was called Prisoner</h2>
       <span class="tag">server/contracts/identity.ts</span>
     </div>
     <p class="lede">
-      Worth calling out, because the obvious call is the wrong one and it took a live server to
-      notice. Every player character is built on the same base record, the vanilla player NPC_
-      at <code>0x7</code>, which is named <em>Prisoner</em>. So <code>getActorName</code>
-      reported that Prisoner had posted work for Prisoner and Prisoner had taken it.
+      My favourite bug in this thing. Every player character sits on the same base record, the
+      vanilla player NPC_ at <code>0x7</code>, and that record is named <em>Prisoner</em>. So
+      <code>getActorName</code> cheerfully told me Prisoner had posted a job for Prisoner and
+      Prisoner had taken it. Took a live server to spot.
     </p>
     <p class="lede">
-      The name a player chose lives in the character's appearance, and it is the same string
-      SkyMP puts above their head: the client runs
+      The real name lives in the character's appearance, and it is the same string SkyMP floats
+      above their head: the client calls
       <code>refr.setDisplayName(model.appearance.name, true)</code> on every appearance update.
-      The stable identity is <code>profileId</code>, not the form id, which is reassigned on
-      every connect.
+      The identity that actually sticks is <code>profileId</code>. Form ids get reshuffled every
+      time someone connects.
     </p>
     <figure class="plate">
       <figcaption><span>Ask for the string the nameplate shows</span><b>characterName()</b></figcaption>
@@ -441,14 +440,13 @@ footer p{max-width:none;color:var(--ink-3)}
 
   <section>
     <div class="sec-head">
-      <h2>It reaches the player with nothing installed</h2>
+      <h2>Players install nothing</h2>
       <span class="tag">no mod, no download</span>
     </div>
     <p class="lede">
-      SkyMP lets a server push client-side JavaScript to a player, and that code holds the full
-      Skyrim Platform API. So the server renders the board itself. This runs every frame for
-      the owner, which is why it compares a revision number and does nothing at all in the
-      common case.
+      SkyMP lets the server push JavaScript straight into a player's client, and that code gets
+      the full Skyrim Platform API. So the server draws the board itself. This runs every single
+      frame, which is why the first thing it does is check a revision number and bail.
     </p>
     <figure class="plate">
       <figcaption><span>Pushed to the player, run in their game</span><b>updateOwner</b></figcaption>
@@ -482,13 +480,13 @@ footer p{max-width:none;color:var(--ink-3)}
 
   <section>
     <div class="sec-head">
-      <h2>What it took to find</h2>
+      <h2>Four things that will eat your afternoon</h2>
       <span class="tag">undocumented</span>
     </div>
     <p class="lede">
-      Four things gate the server-to-client channel. Each fails silently: no error on either
-      side, the client simply never learns the properties exist. None are in the published
-      docs, and the first exists only as a string inside <code>scam_native.node</code>.
+      Four things gate the server to client channel, and every one of them fails silently. No
+      error, no warning, the client just never hears about your properties. None of them are
+      documented, and the first only exists as a string inside <code>scam_native.node</code>.
     </p>
     <div class="plate tablewrap">
       <table>
@@ -526,13 +524,13 @@ footer p{max-width:none;color:var(--ink-3)}
 
   <section>
     <div class="sec-head">
-      <h2>How work actually gets finished</h2>
+      <h2>Who decides the job is done</h2>
       <span class="tag">not honour</span>
     </div>
     <p class="lede">
-      A funded contract holds real coin between the moment work is claimed done and the moment
-      it is paid for. Whoever gets to end that standoff on their own can rob the other one, so
-      it depends on what was promised.
+      A funded contract is sitting on real gold between "I am done" and "here is your pay".
+      Whoever gets to end that standoff on their own can rob the other one, so it comes down to
+      what was promised.
     </p>
     <div class="plate tablewrap">
       <table>
@@ -554,15 +552,15 @@ footer p{max-width:none;color:var(--ink-3)}
       </table>
     </div>
     <p class="lede" style="margin-top:26px">
-      The middle row is the one that matters, and it started out wrong. A funded service used
-      to pay the instant the worker pressed the button, which meant anyone could take a funded
-      job, claim it finished and walk off with the escrow. Expiry made the mirror image
-      possible: a client who ignored finished work until the deadline got their coin back.
+      Middle row is the interesting one, and I had it wrong at first. A funded service used to
+      pay out the instant the worker hit the button, so you could take a funded job, claim it
+      done, and walk off with the escrow having done nothing. Expiry let you run the same scam
+      from the other side: ignore a finished job till the deadline and your gold comes back.
     </p>
     <p class="lede">
-      Now expiry refuses to touch delivered work, and the review window closes the other side.
-      A refusal is still recorded against both parties and judged by neither, which is the part
-      that stays social.
+      Expiry will not touch delivered work now, and the review window shuts the other hole. A
+      refusal still gets logged against both of you and the server judges neither, because that
+      part should stay between players.
     </p>
     <figure class="plate">
       <figcaption><span>Silence is not a refusal</span><b>sweepDelivered()</b></figcaption>
@@ -584,12 +582,12 @@ footer p{max-width:none;color:var(--ink-3)}
   </section>
   <section>
     <div class="sec-head">
-      <h2>Does it run on your client</h2>
+      <h2>Will it run on your client</h2>
       <span class="tag">checked against your published bundle</span>
     </div>
     <p class="lede">
-      Not a guess. Your client is public in <code>BStarRP_SkyMP_Data</code>, so every mechanism
-      this depends on was checked against the 7.5 MB bundle your launcher ships, not against
+      Not guessing. Your client is public in <code>BStarRP_SkyMP_Data</code>, so I checked every
+      mechanism this needs against the actual 7.5 MB bundle your launcher ships, not against
       upstream skymp.
     </p>
     <div class="plate tablewrap">
@@ -606,11 +604,11 @@ footer p{max-width:none;color:var(--ink-3)}
       </table>
     </div>
     <p class="lede" style="margin-top:26px">
-      The one thing that would have broken: your client drives its own React interface with
-      <code>browser.loadUrl</code> and <code>browser.setVisible</code>, so anything of mine that
-      claimed the browser would wipe your UI off the screen. It does not. The push calls a
-      global if one exists and dispatches a CustomEvent, which is the same way your client
-      already hands data to your own interface. Both are no-ops when nothing is listening.
+      Here is the one that would have bitten you. Your client drives its own React UI with
+      <code>browser.loadUrl</code> and <code>browser.setVisible</code> all over the place, so
+      anything of mine grabbing the browser would have wiped your interface mid session. It does
+      not. The push calls a global if one is there and fires a CustomEvent, which is exactly how
+      your client already feeds your own UI. Both do nothing if nobody is listening.
     </p>
     <figure class="plate" style="margin-top:22px">
       <figcaption><span>Delivery that takes over nothing</span><b>updateOwner</b></figcaption>
@@ -622,20 +620,20 @@ footer p{max-width:none;color:var(--ink-3)}
 );</pre>
     </figure>
     <p style="margin-top:22px">
-      So a component of yours listening for <code>mereth:contracts</code> gets the board, and
-      the standalone panel above is there for the case where you would rather not build one.
+      So one listener on <code>mereth:contracts</code> and your UI has the board. Or skip that,
+      drop in the standalone panel above, and write nothing at all.
     </p>
   </section>
 
 
   <section>
     <div class="sec-head">
-      <h2>Running it on your own server</h2>
+      <h2>Getting it running</h2>
       <span class="tag">four steps, no coordination with me</span>
     </div>
     <p class="lede">
-      Nothing here needs my involvement. Take the folder, wire four lines into your gamemode,
-      set two settings, and the server tells you on boot whether it works.
+      You do not need me for any of this. Grab the folder, wire four lines into your gamemode,
+      flip two settings, and the server tells you on boot whether it is working.
     </p>
 
     <div class="stack">
@@ -681,13 +679,13 @@ window.addEventListener(<span class="s">"mereth:contracts"</span>, (e) =&gt; set
 
   <section>
     <div class="sec-head">
-      <h2>How you check I am not lying</h2>
+      <h2>Do not take my word for it</h2>
       <span class="tag">before you trust a line of it</span>
     </div>
     <p class="lede">
-      The contract engine tests itself against your live server on every boot, using your ESPM
-      data and your database. No harness, no fixtures, nothing to install. Start the server and
-      read the log.
+      The engine tests itself against your live server every time it boots, on your ESPM data
+      and your database. No harness, no fixtures, nothing to install. Start it and read the
+      log.
     </p>
     <figure class="plate term">
       <figcaption><span>On your server, at startup</span><b>skymp5-server</b></figcaption>
@@ -699,24 +697,24 @@ window.addEventListener(<span class="s">"mereth:contracts"</span>, (e) =&gt; set
 <span class="dim">[contracts]</span> <span class="ok">CONTRACTS OK</span></pre>
     </figure>
     <p class="lede" style="margin-top:26px">
-      That run posts real contracts, binds real coin, defaults one on purpose and writes the
-      debt note, then checks the arithmetic. If it prints anything but CONTRACTS OK, do not
-      ship it, and the failing line names what broke.
+      That posts real contracts, locks up real gold, defaults one on purpose, writes the debt
+      note, then checks the maths. If it says anything other than CONTRACTS OK, do not ship it,
+      and the failing line tells you what broke.
     </p>
     <ul class="clean">
-      <li><b>Then try to break it in game.</b> Post a funded service, mark it delivered from the worker's side, and watch the escrow refuse to move until the client answers.</li>
-      <li><b>Try to steal from yourself.</b> Take your own contract, settle work you did not do, refuse a delivery you were not party to. Every one is refused by the server and told to you in words.</li>
-      <li><b>Pull the plug.</b> Contracts live in server properties, so restart mid-contract and the board comes back exactly as it was.</li>
+      <li><b>Then go try to break it.</b> Post a funded service, mark it delivered as the worker, and watch the escrow sit there refusing to move until the client answers.</li>
+      <li><b>Try to rob yourself.</b> Take your own contract, settle work you never did, refuse a delivery you had nothing to do with. Server knocks back every one and tells you why in plain words.</li>
+      <li><b>Pull the plug.</b> Contracts live in server properties, so kill it mid contract and the board comes back exactly how you left it.</li>
       <li><b>Read it.</b> 1,293 lines of TypeScript across six files, nothing imported outside <code>node:crypto</code> and the SkyMP types. The interesting decisions carry a comment saying why, not what, which is most of the remaining bulk and is deliberate: you should not have to take my word for any of it.</li>
     </ul>
   </section>
   <section>
-    <div class="sec-head"><h2>Honest limits</h2></div>
+    <div class="sec-head"><h2>What it does not do</h2></div>
     <ul class="clean">
-      <li><b>Goods are checked, services are not.</b> The server counts items into the client's hands. A service settles on the worker's word, deliberately: that is the part players should be arguing about, not the server.</li>
-      <li><b>No arbitration.</b> No dispute queue, no staff tooling. Rejection is recorded against both parties and judged by neither.</li>
-      <li><b>Chromium is environment dependent.</b> Both Skyrim Platform browser backends fail on my dev machine, so the console board is what I could photograph there. Mereth already pins NirnLab UI Platform, so the panel above is the path on your install.</li>
-      <li><b>Tested against a local server.</b> Real skymp5-server, real ESPM data, one connected client. Not yet against Mereth's load or its modlist.</li>
+      <li><b>Goods are checked, services are not.</b> The server counts items into the client's hands. A service settles on the worker's word on purpose, because that is the bit players should be arguing about, not the server.</li>
+      <li><b>No arbitration.</b> No dispute queue, no staff tooling. A rejection gets logged against both parties and judged by neither.</li>
+      <li><b>Chromium depends on the install.</b> Both Skyrim Platform browser backends fought me on my dev box, so the console board is what I could screenshot there. You already pin NirnLab UI Platform, so the panel above is the path on yours.</li>
+      <li><b>Tested on a local server.</b> Real skymp5-server, real ESPM data, one connected client. Not yet against your load or your modlist.</li>
     </ul>
   </section>
 
