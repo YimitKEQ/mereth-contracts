@@ -448,8 +448,9 @@ footer p{max-width:none;color:var(--ink-3)}
       The real name lives in the character's appearance, and it is the same string SkyMP floats
       above their head: the client calls
       <code>refr.setDisplayName(model.appearance.name, true)</code> on every appearance update.
-      The identity that actually sticks is <code>profileId</code>. Form ids get reshuffled every
-      time someone connects.
+      The identity that sticks is the character's <code>actorId</code>, not the account behind it.
+      A profile is account wide, so two characters belonging to one player would otherwise
+      share a reputation and a debt history.
     </p>
     <figure class="plate">
       <figcaption><span>Ask for the string the nameplate shows</span><b>characterName()</b></figcaption>
@@ -667,7 +668,7 @@ footer p{max-width:none;color:var(--ink-3)}
         <div class="drop-body">
           <a class="drop-get" href="mereth-contracts.zip" download>
             <b>Download the module</b>
-            <span><!--drop:meta-->76.8 KB &middot; MIT licensed &middot; 13 files<!--/drop:meta--></span>
+            <span><!--drop:meta-->80.2 KB &middot; MIT licensed &middot; 13 files<!--/drop:meta--></span>
           </a>
 <pre class="drop-tree"><!--drop:tree--><b>THE MODULE</b>
   contracts/contract.ts   <span class="c">// the engine, no game calls</span>
@@ -779,14 +780,16 @@ window.addEventListener(<span class="s">"mereth:contracts"</span>, (e) =&gt; set
   "rev": 12,
   "self": {
     "formId": 4278190140,
-    "profileId": 41,
+    "actorId": 4278190140,
     "name": "Aldric Vane",
-    "coin": 1840
+    "coin": 1840,
+    "hold": "Whiterun"
   },
   "board": [
     {
       "id": "con-00007",
       "kind": "service",
+      "hold": "Whiterun",
       "title": "Escort a salt wagon to Whiterun",
       "body": "Two carts leaving Riverwood at dusk. I want four blades on the road with them.\nPay on arrival at the Bannered Mare, not before.",
       "reward": 450,
@@ -804,6 +807,7 @@ window.addEventListener(<span class="s">"mereth:contracts"</span>, (e) =&gt; set
     {
       "id": "con-00008",
       "kind": "goods",
+      "hold": "Whiterun",
       "title": "Iron ingots for the Skyforge",
       "body": "Eorlund is short again. Bring them to the forge and I will count them there.",
       "reward": 180,
@@ -827,6 +831,7 @@ window.addEventListener(<span class="s">"mereth:contracts"</span>, (e) =&gt; set
     {
       "id": "con-00005",
       "kind": "service",
+      "hold": "Whiterun",
       "title": "Clear the bandits from Halted Stream",
       "body": "They have been taking from the mill for a month. I want it finished quietly.",
       "reward": 900,
@@ -844,6 +849,7 @@ window.addEventListener(<span class="s">"mereth:contracts"</span>, (e) =&gt; set
     {
       "id": "con-00002",
       "kind": "service",
+      "hold": "Whiterun",
       "title": "Carry a letter to Solitude",
       "body": "Sealed. It goes into the hand of the steward and no other.",
       "reward": 200,
